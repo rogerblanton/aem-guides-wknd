@@ -1,27 +1,43 @@
-import jQuery from "jquery";
+(function() {
 
-jQuery(function($) {
     "use strict";
 
-    (function() {
-        const currentUserUrl = $('.wknd-sign-in-buttons').data('current-user-url'),
-            signIn = $('[href="#sign-in"]'),
-            signOut = $('[href="#sign-out"]'),
-            greetingLabel = $('#wkndGreetingLabel'),
-            greetingText = greetingLabel.text(),
-            body = $('body');
+    function handleUserDetails(currentUser) {
 
-        $.getJSON(currentUserUrl + "?nocache=" + new Date().getTime(), function(currentUser) {
-            const isAnonymous = 'anonymous' === currentUser.authorizableId;
+        const isAnonymous = 'anonymous' === currentUser.authorizableId,
+            currentUserUrl = document.querySelector('.wknd-sign-in-buttons').dataset.currentUserUrl,
+            signIn = document.querySelector('[href="#sign-in"]'),
+            signOut = document.querySelector('[href="#sign-out"]'),                
+            httpRequest = new XMLHttpRequest(),
+            body = document.body;
 
-            if(isAnonymous) {
-                signIn.show();
-                body.addClass('anonymous');
+        let greetingLabel = document.getElementById('wkndGreetingLabel'),
+            greetingText = greetingLabel.innerText;
+
+        if(isAnonymous) {
+            signIn.style.display = 'inline-block';
+            body.classList.add('anonymous');
+        } else {
+            signOut.style.display = 'inline-block';
+            greetingLabel.innerHTML = greetingText + ", " + currentUser.name;
+            greetingLabel.style.display = 'inline-block';
+        }
+    }
+
+    function handler() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                handleUserDetails(JSON.parse(httpRequest.responseText));
             } else {
-                signOut.show();
-                greetingLabel.text(greetingText + ", " + currentUser.name);
-                greetingLabel.show();
+                alert("There was a problem with the request.");
             }
-        });
-    })();
-});
+        }
+    }
+        
+    httpRequest.onreadystatechange = handler;
+
+    httpRequest.open("GET", currentUserUrl + "?nocache=" + new Date().getTime(), true);
+    httpRequest.send();
+
+        
+})();
