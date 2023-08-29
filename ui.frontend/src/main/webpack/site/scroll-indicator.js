@@ -14,28 +14,26 @@
  *  limitations under the License.
  */
 
-import jQuery from "jquery";
-
-(function (element, $) {
+(function () {
     'use strict';
-    var target = $(element),
+    var target = document.body,
         className = "scrolly",
         scroll;
 
-    if ($(window).scrollTop() > 15) {
-        target.addClass(className);
+    if (window.scrollY > 15) {
+        target.classList.add(className);
     }
 
     document.addEventListener('scroll', () => {
-        scroll = $(window).scrollTop();
+        scroll = window.scrollY;
         if (scroll > 15) {
-            target.addClass(className);
+            target.classList.add(className);
         } else {
-            target.removeClass(className);
+            target.classList.remove(className);
         }
     }, {
         capture: false,
         passive: true
     });
 
-}('body', jQuery));
+}());
