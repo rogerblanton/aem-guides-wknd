@@ -2,13 +2,14 @@
 
     "use strict";
 
+    const httpRequest = new XMLHttpRequest(),
+        currentUserUrl = document.querySelector('.wknd-sign-in-buttons').dataset.currentUserUrl;
+
     function handleUserDetails(currentUser) {
 
-        const isAnonymous = 'anonymous' === currentUser.authorizableId,
-            currentUserUrl = document.querySelector('.wknd-sign-in-buttons').dataset.currentUserUrl,
+        const isAnonymous = 'anonymous' === currentUser.authorizableId,            
             signIn = document.querySelector('[href="#sign-in"]'),
-            signOut = document.querySelector('[href="#sign-out"]'),                
-            httpRequest = new XMLHttpRequest(),
+            signOut = document.querySelector('[href="#sign-out"]'),                            
             body = document.body;
 
         let greetingLabel = document.getElementById('wkndGreetingLabel'),
