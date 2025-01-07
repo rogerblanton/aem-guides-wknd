@@ -5,6 +5,38 @@ jQuery(function($) {
 
     let visible = false;
 
+    function fadeInEffect(target, callback) {
+        conos
+        var fadeTarget = target;
+        var fadeEffect = setInterval(function () {
+            console.log(fadeTarget.style.opacity);
+            if (!fadeEffect.style.opacity) {
+                fadeEffect.style.opacity = 1;
+            }
+            if (fadeTarget.style.opacity < 100) {
+                fadeTarget.style.opacity += 0.1;
+            } else {
+                clearInterval(fadeEffect);
+            }
+        }, 200);
+        callback();
+    }
+
+    function fadeOutEffect(target, callback) {
+        var fadeTarget = target;
+        var fadeEffect = setInterval(function () {
+            if (!fadeTarget.style) {
+                fadeTarget.style.opacity = 1;
+            }
+            if (fadeTarget.style.opacity > 0) {
+                fadeTarget.style.opacity -= 0.1;
+            } else {
+                clearInterval(fadeEffect);
+            }
+        }, 200);
+        callback();
+    }
+
     /**
      * Handle clicking of the Sign In button
      */
@@ -27,9 +59,16 @@ jQuery(function($) {
         const body = document.querySelector('body');
 
         $.get(xfUrl, function (data) {
-            const modal = $('<div id="wknd-modal"/>');
-            $('body').append(modal.append(data));
-            modal.fadeIn(300, function() { visible = true; });
+            let modal = document.createElement("div");
+
+            modal.id = "wknd-modal"
+            document.body.appendChild(modal);
+            modal.innerHTML = data;
+
+            fadeInEffect(modal, function() {
+                visible = true;    
+            })
+
             visible = true;
             // dispatch event to indicate that the modal has been shown
             // used by sign-in-form.js to dynamically update a successful sign-in redirect to the current page
@@ -40,15 +79,16 @@ jQuery(function($) {
     }
 
     function hideModal(e) {
-        const modal = $('#wknd-modal');
-        // if the target of the click isn't the modal nor a descendant of the modal
-        if (visible && modal && !modal.is(e.target) && modal.has(e.target).length === 0) {
-            e.preventDefault();
+        const modal = document.getElementById('wknd-modal');
+        console.log('in hide modal', e.target, modal.contains(e.target));
 
-            modal.fadeOut(200, function(){
-                modal.remove();
-                visible = false;
+        // if the target of the click isn't the modal nor a descendant of the modal
+        if (visible && modal && !modal.contains(e.target)) {
+            e.preventDefault();
+            fadeOutEffect(modal,function() {
+                modal.remove;
             });
+            visible=false;
 
             return false;
         }
